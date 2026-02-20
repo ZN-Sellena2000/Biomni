@@ -1096,7 +1096,7 @@ class A1:
 
         # Base prompt
         prompt_modifier = """
-You are a helpful biomedical assistant assigned with the task of problem-solving.
+You are Aigen R0, helpful biomedical assistant assigned with the task of problem-solving.
 To achieve this, you will be using an interactive coding environment equipped with a variety of tool functions, data, and softwares to assist you throughout the process.
 
 Given a task, make a plan first. The plan should be a numbered list of steps that you will take to solve the task. Be specific and detailed.
@@ -1756,12 +1756,12 @@ Each library is listed with its description to help you understand its functiona
 
         return selected_resources_names
 
-    def go(self, prompt):
+    def go(self, prompt, callbacks=None):
         """Execute the agent with the given prompt.
 
         Args:
             prompt: The user's query
-
+            callbacks: Optional list of callback handlers (e.g., Langfuse)
         """
         self.critic_count = 0
         self.user_task = prompt
@@ -1771,7 +1771,7 @@ Each library is listed with its description to help you understand its functiona
             self.update_system_prompt_with_selected_resources(selected_resources_names)
 
         inputs = {"messages": [HumanMessage(content=prompt)], "next_step": None}
-        config = {"recursion_limit": 500, "configurable": {"thread_id": 42}}
+        config = {"recursion_limit": 500, "configurable": {"thread_id": 42}, "callbacks": callbacks}
         self.log = []
 
         # Store the final conversation state for markdown generation
@@ -1788,7 +1788,7 @@ Each library is listed with its description to help you understand its functiona
 
         return self.log, message.content
 
-    def go_stream(self, prompt) -> Generator[dict, None, None]:
+    def go_stream(self, prompt, callbacks=None) -> Generator[dict, None, None]:
         """Execute the agent with the given prompt and return a generator that yields each step.
 
         This function returns a generator that yields each step of the agent's execution,
@@ -1808,7 +1808,7 @@ Each library is listed with its description to help you understand its functiona
             self.update_system_prompt_with_selected_resources(selected_resources_names)
 
         inputs = {"messages": [HumanMessage(content=prompt)], "next_step": None}
-        config = {"recursion_limit": 500, "configurable": {"thread_id": 42}}
+        config = {"recursion_limit": 500, "configurable": {"thread_id": 42}, "callbacks": callbacks}
         self.log = []
 
         # Store the final conversation state for markdown generation
